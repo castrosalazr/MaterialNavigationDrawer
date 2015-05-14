@@ -875,19 +875,20 @@ public abstract class MaterialNavigationDrawer<Fragment> extends ActionBarActivi
                     break;
                 case BACKPATTERN_CUSTOM:
                     MaterialSection backedSection = backToSection(getCurrentSection());
+                    if( backedSection != null ) {
+                        if (currentSection == backedSection)
+                            super.onBackPressed();
+                        else {
+                            if (backedSection.getTarget() != MaterialSection.TARGET_FRAGMENT) {
+                                throw new RuntimeException("The restored section must have a fragment as target");
+                            }
+                            backedSection.select();
+                            changeToolbarColor(backedSection);
 
-                    if (currentSection == backedSection)
-                        super.onBackPressed();
-                    else {
-                        if (backedSection.getTarget() != MaterialSection.TARGET_FRAGMENT) {
-                            throw new RuntimeException("The restored section must have a fragment as target");
+                            setFragment((Fragment) backedSection.getTargetFragment(), backedSection.getTitle(), (Fragment) currentSection.getTargetFragment());
+                            afterFragmentSetted((Fragment) backedSection.getTargetFragment(), backedSection.getTitle());
+                            syncSectionsState(backedSection);
                         }
-                        backedSection.select();
-                        changeToolbarColor(backedSection);
-
-                        setFragment((Fragment) backedSection.getTargetFragment(), backedSection.getTitle(), (Fragment) currentSection.getTargetFragment());
-                        afterFragmentSetted((Fragment) backedSection.getTargetFragment(),backedSection.getTitle());
-                        syncSectionsState(backedSection);
                     }
                     break;
             }
